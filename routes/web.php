@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -36,6 +37,8 @@ Route::get('lang/{locale}', function ($locale) {
 Route::get('/', function () {
     return view('pages.dashboard.admin');
 })->name('/');
+
+Route::get('/login',[AuthController::class,'index'])->name('login');
 
 Route::prefix('dashboard')->group(function () {
     Route::view('index', 'back.dashboard.index')->name('index');
@@ -89,13 +92,3 @@ Route::prefix('others')->group(function () {
     Route::view('500', 'errors.500')->name('error-500');
     Route::view('503', 'errors.503')->name('error-503');
 });
-
-
-Route::get('/clear-cache', function() {
-    Artisan::call('config:cache');
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('view:clear');
-    Artisan::call('route:clear');
-    return "Cache is cleared";
-})->name('clear.cache');
