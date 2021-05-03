@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -16,9 +17,20 @@ use Illuminate\Support\Facades\Session;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/login',[AuthController::class,'index'])->name('login');
+Route::post('authenticate',[AuthController::class,'authenticate'])->name('login.post');
+
+Route::middleware(['auth'])->group(function(){
+    Route::get('logout',[AuthController::class,'logout'])->name('logout');
+    Route::get('/home',[HomeController::class,'index'])->name('home.index');
+    Route::get('/', function () {
+        return view('pages.dashboard.admin');
+    })->name('/');
+});
 
 
 //Language Change
@@ -34,11 +46,6 @@ Route::get('lang/{locale}', function ($locale) {
 })->name('lang');
 
 
-Route::get('/', function () {
-    return view('pages.dashboard.admin');
-})->name('/');
-
-Route::get('/login',[AuthController::class,'index'])->name('login');
 
 Route::prefix('dashboard')->group(function () {
     Route::view('index', 'back.dashboard.index')->name('index');

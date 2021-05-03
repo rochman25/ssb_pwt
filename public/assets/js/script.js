@@ -22,10 +22,10 @@
 
     $('.show-hide span').click(function () {
         if ($(this).hasClass('show')) {
-            $('input[name="login[password]"]').attr('type', 'text');
+            $('input[name="password"]').attr('type', 'text');
             $(this).removeClass('show');
         } else {
-            $('input[name="login[password]"]').attr('type', 'password');
+            $('input[name="password"]').attr('type', 'password');
             $(this).addClass('show');
         }
     });
