@@ -20,6 +20,8 @@ class CreateStudentPaymetnsTable extends Migration
             $table->double('amount');
             $table->string('status');
             $table->timestamps();
+
+            $table->foreign('student_id')->references('id')->on('students');
         });
     }
 
