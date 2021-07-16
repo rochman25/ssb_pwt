@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -30,6 +32,8 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/', function () {
         return view('pages.dashboard.admin');
     })->name('/');
+    Route::get('roles',[RoleController::class,'index'])->name('roles.index');
+    Route::resource('users', UserController::class);
 });
 
 
