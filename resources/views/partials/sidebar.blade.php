@@ -44,6 +44,13 @@
                         <span class="lan-3"> Siswa </span>
                     </a>
                 </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'instructors.index' ? 'active' : '' }}"
+                      style="cursor: pointer;" href="{{ route('instructors.index') }}">
+                      <i data-feather="users"></i>
+                      <span class="lan-3"> Pelatih </span>
+                  </a>
+              </li>
                 <li class="sidebar-main-title">
                     <div>
                         <h6>System</h6>

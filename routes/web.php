@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
@@ -38,6 +39,7 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('users', UserController::class);
     Route::resource('students', StudentController::class);
     Route::resource('classes', ClassController::class);
+    Route::resource('instructors', InstructorController::class);
 });
 
 
