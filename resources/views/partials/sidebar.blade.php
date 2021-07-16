@@ -27,6 +27,18 @@
                 </li>
                 <li class="sidebar-main-title">
                     <div>
+                        <h6>Master Data</h6>
+                    </div>
+                </li>
+                <li class="sidebar-list">
+                  <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.index' ? 'active' : '' }}"
+                      style="cursor: pointer;" href="{{ route('students.index') }}">
+                      <i data-feather="users"></i>
+                      <span class="lan-3"> Siswa </span>
+                  </a>
+              </li>
+                <li class="sidebar-main-title">
+                    <div>
                         <h6>System</h6>
                     </div>
                 </li>
@@ -38,12 +50,12 @@
                     </a>
                 </li>
                 <li class="sidebar-list">
-                  <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'users.index' ? 'active' : '' }}"
-                      style="cursor: pointer;" href="{{ route('users.index') }}">
-                      <i data-feather="users"></i>
-                      <span class="lan-3"> Pengguna </span>
-                  </a>
-              </li>
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'users.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('users.index') }}">
+                        <i data-feather="users"></i>
+                        <span class="lan-3"> Pengguna </span>
+                    </a>
+                </li>
             </ul>
         </div>
         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::middleware(['auth'])->group(function(){
     })->name('/');
     Route::get('roles',[RoleController::class,'index'])->name('roles.index');
     Route::resource('users', UserController::class);
+    Route::resource('students', StudentController::class);
 });
 
 

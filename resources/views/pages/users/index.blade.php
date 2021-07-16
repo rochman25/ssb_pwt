@@ -46,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($users as $index => $item)
+                                    @forelse ($users as $index => $item)
                                         <tr>
                                             <th scope="row">{{ ++$index }}</th>
                                             <td>{{ $item->username }}</td>
@@ -62,7 +62,11 @@
                                                     Hapus</button>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center">Belum ada data.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                             {{ $users->links() }}
