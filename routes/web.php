@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
@@ -36,6 +37,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('roles',[RoleController::class,'index'])->name('roles.index');
     Route::resource('users', UserController::class);
     Route::resource('students', StudentController::class);
+    Route::resource('classes', ClassController::class);
 });
 
 

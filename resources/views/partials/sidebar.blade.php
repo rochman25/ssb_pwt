@@ -31,12 +31,19 @@
                     </div>
                 </li>
                 <li class="sidebar-list">
-                  <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.index' ? 'active' : '' }}"
-                      style="cursor: pointer;" href="{{ route('students.index') }}">
-                      <i data-feather="users"></i>
-                      <span class="lan-3"> Siswa </span>
-                  </a>
-              </li>
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'classes.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('classes.index') }}">
+                        <i data-feather="layers"></i>
+                        <span class="lan-3"> Kelas </span>
+                    </a>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('students.index') }}">
+                        <i data-feather="users"></i>
+                        <span class="lan-3"> Siswa </span>
+                    </a>
+                </li>
                 <li class="sidebar-main-title">
                     <div>
                         <h6>System</h6>
