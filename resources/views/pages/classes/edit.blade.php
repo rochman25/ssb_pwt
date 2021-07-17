@@ -5,6 +5,8 @@
 @endsection
 
 @section('style')
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
+<!-- Plugins css Ends-->
 @endsection
 
 @section('breadcrumb-title')
@@ -61,6 +63,25 @@
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Pelatih</label>
+                                    <select name="instructor_id" class="js-example-basic-single col-sm-12">
+                                        <option value="">Pilih Pelatih</option>
+                                        @foreach ($instructors as $item)
+                                            <option value="{{ $item->id }}" @if(old('insturctor_id',$class->detail->instructor->id)) selected @endif>{{ $item->name. "-" .$item->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Siswa</label>
+                                    <select class="js-example-basic-multiple col-sm-12" name="students[]" multiple="multiple">
+                                        @foreach ($students as $item)
+                                            <option value="{{ $item->id }}" @if(!empty($item->class) && $item->class->class_id == $class->id) selected @endif>{{ $item->fullname }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label for="validationServer03">Deskripsi</label>
                                     <textarea class="form-control form-control @error('description') is-invalid @enderror"
@@ -81,4 +102,6 @@
 @endsection
 
 @section('script')
+<script src="{{asset('assets/js/select2/select2.full.min.js')}}"></script>
+<script src="{{asset('assets/js/select2/select2-custom.js')}}"></script>
 @endsection

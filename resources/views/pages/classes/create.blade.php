@@ -5,6 +5,7 @@
 @endsection
 
 @section('style')
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/select2.css') }}">
 @endsection
 
 @section('breadcrumb-title')
@@ -45,11 +46,10 @@
                                     <div class="row">
                                         <div class="col">
                                             <label class="d-block" for="edo-ani">
-                                                <input class="radio_animated" id="edo-ani" type="radio" value="0" @if(old('is_active') == '0') checked @endif name="is_active"
-                                                    checked=""> Ya
+                                                <input class="radio_animated" id="edo-ani" type="radio" value="0" @if (old('is_active') == '0') checked @endif name="is_active" checked=""> Ya
                                             </label>
                                             <label class="d-block" for="edo-ani1">
-                                                <input class="radio_animated" id="edo-ani1" type="radio" value="1" @if(old('is_active') == '1') checked @endif name="is_active">
+                                                <input class="radio_animated" id="edo-ani1" type="radio" value="1" @if (old('is_active') == '1') checked @endif name="is_active">
                                                 Tidak
                                             </label>
                                         </div>
@@ -57,6 +57,25 @@
                                     @error('is_active')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Pelatih</label>
+                                    <select name="instructor_id" class="js-example-basic-single col-sm-12">
+                                        <option value="">Pilih Pelatih</option>
+                                        @foreach ($instructors as $item)
+                                            <option value="{{ $item->id }}" @if (old('insturctor_id') == $item->id) selected @endif>{{ $item->name . '-' . $item->email }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Siswa</label>
+                                    <select class="js-example-basic-multiple col-sm-12" name="students[]" multiple="multiple">
+                                        @foreach ($students as $item)
+                                            <option value="{{ $item->id }}">{{ $item->fullname }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
@@ -80,4 +99,6 @@
 @endsection
 
 @section('script')
+    <script src="{{ asset('assets/js/select2/select2.full.min.js') }}"></script>
+    <script src="{{ asset('assets/js/select2/select2-custom.js') }}"></script>
 @endsection
