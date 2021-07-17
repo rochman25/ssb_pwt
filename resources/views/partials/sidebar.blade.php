@@ -53,6 +53,18 @@
                 </li>
                 <li class="sidebar-main-title">
                     <div>
+                        <h6>Kegiatan</h6>
+                    </div>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'schedules.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('schedules.index') }}">
+                        <i data-feather="calendar"></i>
+                        <span class="lan-3"> Jadwal </span>
+                    </a>
+                </li>
+                <li class="sidebar-main-title">
+                    <div>
                         <h6>System</h6>
                     </div>
                 </li>
