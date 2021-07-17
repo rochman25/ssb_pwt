@@ -8,6 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -26,10 +27,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Auth::routes(['verify' => true]);
 Route::get('/login',[AuthController::class,'index'])->name('login');
 Route::post('authenticate',[AuthController::class,'authenticate'])->name('login.post');
+Route::get('/register',[AuthController::class, 'register'])->name('register');
+Route::post('/register',[AuthController::class,'storeNewUser'])->name('register.post');
+Route::get('/register_success',[AuthController::class,'registerDone'])->name('register.success');
+Route::get('/verification/{id}/{hash}',[AuthController::class,'verification'])->middleware(['signed','throttle:6,1'])->name('verification.verify');
+Route::get('/not_verified',[AuthController::class,'notVerified'])->name('verification.notice');
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth','verified'])->group(function(){
     Route::get('logout',[AuthController::class,'logout'])->name('logout');
     Route::get('/home',[HomeController::class,'index'])->name('home.index');
     Route::get('/', function () {

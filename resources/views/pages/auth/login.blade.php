@@ -22,11 +22,13 @@
                         @if (Session::has('error'))
                             <x-danger-alert-message :message="session()->get('error')" />
                         @endif
+                        @component('components.alert-success')
+                        @endcomponent
                         <div class="login-main">
                             <form class="theme-form" action="{{ route('login.post') }}" method="POST">
                                 @csrf
-                                <h4>{{ __('messages.sign_in') }}</h4>
-                                <p>{{ __('messages.sign_in_message') }}</p>
+                                <h4>{{ "Sign In" }}</h4>
+                                <p>{{ "Silahkan Sign In untuk melanjutkan." }}</p>
                                 <div class="form-group">
                                     <label class="col-form-label">Username</label>
                                     <input class="form-control @error('username') is-invalid @enderror" required=""
@@ -52,7 +54,7 @@
                                     </div>
                                     <button class="btn btn-primary btn-block" type="submit">Sign in</button>
                                 </div>
-                                {{-- <p class="mt-4 mb-0">Don't have account?<a class="ml-2" href="{{ route('sign-up') }}">Create Account</a></p> --}}
+                                <p class="mt-4 mb-0">Belum Punya Akun?<a class="ml-2" href="{{ route('register') }}">Buat Akun</a></p>
                             </form>
                         </div>
                     </div>
