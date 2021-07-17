@@ -63,6 +63,13 @@
                         <span class="lan-3"> Jadwal </span>
                     </a>
                 </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'student_payments.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('student_payments.index') }}">
+                        <i data-feather="credit-card"></i>
+                        <span class="lan-3"> Pembayaran SPP </span>
+                    </a>
+                </li>
                 <li class="sidebar-main-title">
                     <div>
                         <h6>System</h6>

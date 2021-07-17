@@ -7,6 +7,7 @@ use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,7 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::resource('classes', ClassController::class);
     Route::resource('instructors', InstructorController::class);
     Route::resource('schedules', ScheduleController::class);
+    Route::resource('student_payments', StudentPaymentController::class);
 });
 
 
