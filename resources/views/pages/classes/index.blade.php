@@ -28,6 +28,8 @@
                             Tambah</a>
                     </div>
                     <div class="card-body">
+                        @component('components.alert-success')
+                        @endcomponent
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class="thead-light">
