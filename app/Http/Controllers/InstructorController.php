@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instructor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class InstructorController extends Controller
 {
@@ -45,11 +48,21 @@ class InstructorController extends Controller
             'pob' => 'required',
             'address' => 'required',
             'email' => 'nullable|email|unique:instructors,email',
-            'phone_number' => 'nullable|numeric|unique:instructors,phone_number'
+            'phone_number' => 'nullable|numeric|unique:instructors,phone_number',
+            'username' => 'required|alpha_dash|unique:users,username',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|confirmed'
         ]);
         try {
             DB::beginTransaction();
+            $userData = $request->only(['username','email','name']);
+            $userData['password'] = Hash::make($request->input('password'));
+            $user = User::create($userData);
+            $role = Role::where('name','instructor')->first();
+            $user->assignRole([$role->id]);
+            $user->markEmailAsVerified();
             $requestData = $request->only(['name', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address']);
+            $requestData['user_id'] = $user->id;
             Instructor::create($requestData);
             DB::commit();
             return redirect()->route('instructors.index')->with('success', $this->context . ' berhasil disimpan');
@@ -91,6 +104,7 @@ class InstructorController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $instructor = Instructor::find($id);
         $request->validate([
             'name' => 'required',
             'gender' => 'required',
@@ -98,11 +112,18 @@ class InstructorController extends Controller
             'pob' => 'required',
             'address' => 'required',
             'email' => 'nullable|email|unique:instructors,email,'.$id,
-            'phone_number' => 'nullable|numeric|unique:instructors,phone_number,'.$id
+            'phone_number' => 'nullable|numeric|unique:instructors,phone_number,'.$id,
+            'username' => 'required|alpha_dash|unique:users,username,'.$instructor->user_id,
+            'email' => 'required|email|unique:users,email,'.$instructor->user_id,
+            'password' => 'nullable|confirmed'
         ]);
         try {
             DB::beginTransaction();
-            $instructor = Instructor::find($id);
+            $userData = $request->only(['username','email','name']);
+            if(!empty($request->input('password'))){
+                $userData['password'] = Hash::make($request->input('password'));   
+            }
+            User::where('id',$instructor->user_id)->update($userData);
             $requestData = $request->only(['name', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address']);
             $instructor->update($requestData);
             DB::commit();

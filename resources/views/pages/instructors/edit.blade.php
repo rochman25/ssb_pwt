@@ -109,6 +109,36 @@
                                     @enderror
                                 </div>
                             </div>
+                            <hr class="mt-4 mb-4">
+                            <h6 class="pb-2">Akun Pelatih</h6>
+                            <hr class="mb-2">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Username</label>
+                                    <input class="form-control @error('username') is-invalid @enderror"
+                                        id="validationServer02" type="text"
+                                        value="{{ old('username', $instructor->user->username) }}" name="username" required="">
+                                    @error('username')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer05">Password</label>
+                                    <input class="form-control @error('password') is-invalid @enderror" name="password"
+                                        id="validationServer05" type="password">
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer05">Confirm Password</label>
+                                    <input class="form-control @error('password') is-invalid @enderror"
+                                        name="password_confirmation" id="validationServer05" type="password">
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                             <button class="btn btn-primary" type="submit">Simpan</button>
                         </form>
                     </div>

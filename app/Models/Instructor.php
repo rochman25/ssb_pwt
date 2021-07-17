@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Instructor extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'gender', 'dob', 'pob', 'address', 'email', 'phone_number'];
+    protected $fillable = ['name', 'gender', 'dob', 'pob', 'address', 'email', 'phone_number','user_id'];
+
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
+    }
 }
