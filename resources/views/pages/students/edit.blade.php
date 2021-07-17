@@ -14,7 +14,7 @@
 @section('breadcrumb-items')
     <li class="breadcrumb-item">Master Data</li>
     <li class="breadcrumb-item">Siswa</li>
-    <li class="breadcrumb-item active">Tambah Siswa</li>
+    <li class="breadcrumb-item active">Edit Siswa</li>
 @endsection
 
 @section('content')
@@ -23,20 +23,21 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Tambah Siswa</h5>
+                        <h5>Edit Siswa</h5>
                         <span>berikut form data siswa.</span>
                     </div>
                     <div class="card-body">
                         @component('components.alert-danger')
                         @endcomponent
-                        <form action="{{ route('students.update',$student->id) }}" method="POST">
+                        <form action="{{ route('students.update', $student->id) }}" method="POST">
                             @csrf
                             @method("PUT")
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="validationServer01">Nama Lengkap</label>
                                     <input class="form-control @error('fullname') is-invalid @enderror" name="fullname"
-                                        id="validationServer01" type="text" value="{{ old('fullname',$student->fullname) }}" required="">
+                                        id="validationServer01" type="text"
+                                        value="{{ old('fullname', $student->fullname) }}" required="">
                                     @error('fullname')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -46,11 +47,11 @@
                                     <div class="row">
                                         <div class="col">
                                             <label class="d-block" for="edo-ani">
-                                                <input class="radio_animated" id="edo-ani" type="radio" value="L" @if(old('gender',$student->gender) == "L") checked @endif name="gender"
-                                                    checked=""> Laki - Laki
+                                                <input class="radio_animated" id="edo-ani" type="radio" value="L" @if (old('gender', $student->gender) == 'L') checked @endif name="gender" checked=""> Laki -
+                                                Laki
                                             </label>
                                             <label class="d-block" for="edo-ani1">
-                                                <input class="radio_animated" id="edo-ani1" type="radio" value="P" @if(old('gender',$student->gender) == "P") checked @endif name="gender">
+                                                <input class="radio_animated" id="edo-ani1" type="radio" value="P" @if (old('gender', $student->gender) == 'P') checked @endif name="gender">
                                                 Perempuan
                                             </label>
                                         </div>
@@ -64,7 +65,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="validationServer01">Tanggal Lahir</label>
                                     <input class="form-control @error('dob') is-invalid @enderror" name="dob"
-                                        id="validationServer01" type="date" value="{{ old('dob',$student->dob) }}" required="">
+                                        id="validationServer01" type="date" value="{{ old('dob', $student->dob) }}"
+                                        required="">
                                     @error('dob')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -72,7 +74,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="validationServer02">Tempat Lahir</label>
                                     <input class="form-control @error('pob') is-invalid @enderror" id="validationServer02"
-                                        type="text" value="{{ old('pob',$student->pob) }}" name="pob" required="">
+                                        type="text" value="{{ old('pob', $student->pob) }}" name="pob" required="">
                                     @error('pob')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -82,8 +84,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="validationServer03">Email</label>
                                     <input class="form-control form-control @error('email') is-invalid @enderror"
-                                        id="validationServer03" type="email" name="email" value="{{ old('email',$student->email) }}"
-                                        required="">
+                                        id="validationServer03" type="email" name="email"
+                                        value="{{ old('email', $student->email) }}" required="">
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -92,7 +94,8 @@
                                     <label for="validationServer04">Nomor Telphone</label>
                                     <input type="number"
                                         class="form-control form-control @error('phone_number') is-invalid @enderror"
-                                        id="validationServer04" name="phone_number" value="{{ old('phone_number',$student->phone_number) }}" required="">
+                                        id="validationServer04" name="phone_number"
+                                        value="{{ old('phone_number', $student->phone_number) }}" required="">
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -103,7 +106,7 @@
                                     <label for="validationServer03">Alamat</label>
                                     <textarea class="form-control form-control @error('address') is-invalid @enderror"
                                         id="validationServer03" name="address"
-                                        required="">{{ old('address',$student->address) }}</textarea>
+                                        required="">{{ old('address', $student->address) }}</textarea>
                                     @error('address')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -114,7 +117,7 @@
                                     <label for="validationServer03">Nama Orang Tua / Wali</label>
                                     <input class="form-control form-control @error('parent_name') is-invalid @enderror"
                                         id="validationServer03" type="text" name="parent_name"
-                                        value="{{ old('parent_name',$student->parent_name) }}" required="">
+                                        value="{{ old('parent_name', $student->parent_name) }}" required="">
                                     @error('parent_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -124,7 +127,8 @@
                                     <input type="number"
                                         class="custom-select form-control form-control @error('parent_phone_number') is-invalid @enderror"
                                         id="validationServer04" name="parent_phone_number"
-                                        value="{{ old('parent_phone_number',$student->parent_phone_number) }}" required="">
+                                        value="{{ old('parent_phone_number', $student->parent_phone_number) }}"
+                                        required="">
                                     @error('parent_phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -136,8 +140,38 @@
                                     <textarea
                                         class="form-control form-control @error('parent_address') is-invalid @enderror"
                                         id="validationServer03" name="parent_address"
-                                        required="">{{ old('parent_address',$student->parent_address) }}</textarea>
+                                        required="">{{ old('parent_address', $student->parent_address) }}</textarea>
                                     @error('parent_address')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <hr class="mt-4 mb-4">
+                            <h6 class="pb-2">Akun Siswa</h6>
+                            <hr class="mb-2">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer02">Username</label>
+                                    <input class="form-control @error('username') is-invalid @enderror"
+                                        id="validationServer02" type="text"
+                                        value="{{ old('username', $student->user->username) }}" name="username" required="">
+                                    @error('username')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer05">Password</label>
+                                    <input class="form-control @error('password') is-invalid @enderror" name="password"
+                                        id="validationServer05" type="password">
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer05">Confirm Password</label>
+                                    <input class="form-control @error('password') is-invalid @enderror"
+                                        name="password_confirmation" id="validationServer05" type="password">
+                                    @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
