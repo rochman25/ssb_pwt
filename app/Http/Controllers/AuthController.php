@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -23,7 +26,8 @@ class AuthController extends Controller
         return view('pages.auth.login');
     }
 
-    public function authenticate(Request $request){
+    public function authenticate(Request $request)
+    {
         $request->validate([
             "username" => "required|string",
             "password" => "required"
@@ -32,14 +36,14 @@ class AuthController extends Controller
             //code...
             $credentials = $request->only('username', 'password');
             $remember = false;
-            if($request->input('remember_me')){
+            if ($request->input('remember_me')) {
                 $remember = true;
             }
-            if (Auth::attempt($credentials,$remember)) {
+            if (Auth::attempt($credentials, $remember)) {
                 $request->session()->regenerate();
                 return redirect()->route('home.index');
             }
-    
+
             return back()->withInput()->withError('Mohon maaf username atau password tidak sesuai.');
         } catch (\Throwable $th) {
             //throw $th;
@@ -47,18 +51,21 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
     }
 
-    public function register(Request $request){
-        return view('pages.auth.register');   
+    public function register(Request $request)
+    {
+        return view('pages.auth.register');
     }
 
-    public function storeNewUser(Request $request){
+    public function storeNewUser(Request $request)
+    {
         $request->validate([
             'username' => 'required|unique:users,username',
             'email' => 'required|unique:users,email',
@@ -68,29 +75,31 @@ class AuthController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $name = $request->input('first_name')." ".$request->input('last_name');
-            $userData = $request->only(['username','email']);
+            $name = $request->input('first_name') . " " . $request->input('last_name');
+            $userData = $request->only(['username', 'email']);
             $userData['name'] = $name;
             $userData['password'] = Hash::make($request->input('password'));
             $user = User::create($userData);
-            $role = Role::where('name','siswa')->first();
+            $role = Role::where('name', 'siswa')->first();
             $user->assignRole([$role->id]);
             DB::commit();
             $credentials = $request->only('username', 'password');
             Auth::attempt($credentials);
             $user->sendEmailVerificationNotification();
-            return redirect()->route('register.success')->with('success','Registrasi Akun Berhasil.');
+            return redirect()->route('register.success')->with('success', 'Registrasi Akun Berhasil.');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
         }
     }
 
-    public function registerDone(Request $request){
+    public function registerDone(Request $request)
+    {
         return view('pages.auth.verification');
     }
 
-    public function verification(EmailVerificationRequest $request){
+    public function verification(EmailVerificationRequest $request)
+    {
         $user = User::find($request->route('id')); //takes user ID from verification link. Even if somebody would hijack the URL, signature will be fail the request
         if ($user->hasVerifiedEmail()) {
             $message = __('Email anda sudah diverifikasi.');
@@ -100,14 +109,53 @@ class AuthController extends Controller
         if ($user->markEmailAsVerified()) {
             event(new Verified($user));
         }
-        
+
         $message = __('Email anda sudah diverifikasi.');
 
         return redirect('login')->with('success', $message);
     }
 
-    public function notVerified(Request $request){
+    public function notVerified(Request $request)
+    {
         return view('pages.auth.not_verified');
     }
 
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with(['status' => __($status)])
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
+    }
 }

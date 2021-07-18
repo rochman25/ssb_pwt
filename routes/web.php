@@ -35,6 +35,15 @@ Route::post('/register',[AuthController::class,'storeNewUser'])->name('register.
 Route::get('/register_success',[AuthController::class,'registerDone'])->name('register.success');
 Route::get('/verification/{id}/{hash}',[AuthController::class,'verification'])->middleware(['signed','throttle:6,1'])->name('verification.verify');
 Route::get('/not_verified',[AuthController::class,'notVerified'])->name('verification.notice');
+Route::get('/forgot-password', function () {
+    return view('pages.auth.forgot-password');
+})->middleware('guest')->name('password.request');
+Route::post('/forgot-password',[AuthController::class,'forgotPassword'])->middleware('guest')->name('password.email');
+Route::get('/reset-password/{token}', function ($token) {
+    return view('pages.auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+Route::post('/reset-password',[AuthController::class,'resetPassword'])->middleware('guest')->name('password.update');
+
 
 Route::middleware(['auth','verified'])->group(function(){
     Route::get('logout',[AuthController::class,'logout'])->name('logout');
