@@ -59,6 +59,7 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::resource('classes', ClassController::class);
     Route::resource('instructors', InstructorController::class);
     Route::resource('schedules', ScheduleController::class);
+    Route::post('student_payments/{id}/student',[StudentPaymentController::class,'storeStudent'])->name('student_payments.store.student');
     Route::resource('student_payments', StudentPaymentController::class);
 });
 

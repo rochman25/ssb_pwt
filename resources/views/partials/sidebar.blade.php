@@ -42,15 +42,15 @@
                     </a>
                 </li>
                 <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.index' ? 'active' : '' }}"
-                        style="cursor: pointer;" href="{{ route('students.index') }}">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'student_payments.show' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('student_payments.show',Auth::user()->id) }}">
                         <i data-feather="credit-card"></i>
                         <span class="lan-3"> Kartu SPP </span>
                     </a>
                 </li>
                 <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'student_payments.index' ? 'active' : '' }}"
-                        style="cursor: pointer;" href="{{ route('student_payments.index') }}">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'student_payments.create' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('student_payments.create') }}">
                         <i data-feather="dollar-sign"></i>
                         <span class="lan-3"> Pembayaran SPP </span>
                     </a>
