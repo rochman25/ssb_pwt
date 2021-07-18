@@ -189,4 +189,30 @@ class StudentController extends Controller
             return response()->json(['status' => false,'errors' => $e->getMessage()]);
         }
     }
+
+    public function updateStudent(Request $request, $id){
+        $request->validate([
+            'fullname' => 'required',
+            'gender' => 'required',
+            'dob' => 'required|date',
+            'pob' => 'required',
+            'address' => 'required',
+            'parent_name' => 'required',
+            'parent_address' => 'required',
+            'parent_phone_number' => 'required|unique:students,parent_phone_number,'.$id,
+            'phone_number' => 'nullable|numeric|unique:students,phone_number,'.$id,
+        ]);
+        try {
+            DB::beginTransaction();
+            $student = Student::find($id);
+            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number']);
+            $student->update($requestData);
+            DB::commit();
+            return redirect()->back()->with('success', 'Biodata berhasil diperbarui');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
+        }
+    }
+
 }

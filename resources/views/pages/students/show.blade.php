@@ -18,6 +18,8 @@
 @section('content')
     <div class="container-fluid">
         <div class="edit-profile">
+            @component('components.alert-success')
+            @endcomponent
             <div class="row">
                 <div class="col-lg-4">
                     <div class="card">
@@ -29,7 +31,10 @@
                                         class="fe fe-x"></i></a></div>
                         </div>
                         <div class="card-body">
-                            <form>
+                            <form action="{{ route('users.update', Auth::user()->id) }}" method="POST">
+                                @csrf
+                                @method("PUT")
+                                <input type="hidden" name="name" value="{{ $student->fullname }}">
                                 <div class="row mb-2">
                                     <div class="col-auto"><img class="img-70 rounded-circle" alt=""
                                             src="{{ asset($student->photo_profil) }}"></div>
@@ -40,23 +45,29 @@
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Username</label>
-                                    <input class="form-control" type="text" name="username"
+                                    <input class="form-control @error('username') is-invalid @enderror" type="text" name="username"
                                         value="{{ $student->user->username }}" placeholder="">
+                                    @error('username')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Email-Address</label>
-                                    <input class="form-control" name="email" value="{{ $student->user->email }}"
+                                    <input class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $student->user->email }}"
                                         placeholder="your-email@domain.com">
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-footer">
-                                    <button class="btn btn-primary btn-block">Simpan</button>
+                                    <button class="btn btn-primary btn-block" type="submit">Simpan</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-8">
-                    <form class="card" action="{{ route('students.update', $student->id) }}" method="POST"
+                    <form class="card" action="{{ route('students.update.biodata', $student->id) }}" method="POST"
                         enctype="multipart/form-data">
                         <div class="card-header">
                             <h4 class="card-title mb-0">Biodata Anda</h4>
@@ -77,7 +88,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="validationServer01">Tanggal Daftar</label>
-                                            <input class="form-control @error('register_date') is-invalid @enderror"
+                                            <input disabled class="form-control @error('register_date') is-invalid @enderror"
                                                 name="register_date" id="validationServer01" type="date"
                                                 value="{{ old('register_date', $student->register_date) }}" required="">
                                             @error('register_date')
