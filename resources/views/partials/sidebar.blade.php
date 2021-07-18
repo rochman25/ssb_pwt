@@ -25,6 +25,39 @@
                         <span class="lan-3"> Dashboard </span>
                     </a>
                 </li>
+                
+                @hasrole('siswa')
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.show' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('students.show',Auth::user()->student->id) }}">
+                        <i data-feather="user"></i>
+                        <span class="lan-3"> Biodata Siswa </span>
+                    </a>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'schedules.show' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('schedules.show',Auth::user()->student->id) }}">
+                        <i data-feather="calendar"></i>
+                        <span class="lan-3"> Jadwal </span>
+                    </a>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'students.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('students.index') }}">
+                        <i data-feather="credit-card"></i>
+                        <span class="lan-3"> Kartu SPP </span>
+                    </a>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'student_payments.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('student_payments.index') }}">
+                        <i data-feather="dollar-sign"></i>
+                        <span class="lan-3"> Pembayaran SPP </span>
+                    </a>
+                </li>
+                @endhasrole
+
+                @hasrole('Admin')
                 <li class="sidebar-main-title">
                     <div>
                         <h6>Master Data</h6>
@@ -89,6 +122,7 @@
                         <span class="lan-3"> Pengguna </span>
                     </a>
                 </li>
+                @endhasrole
             </ul>
         </div>
         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

@@ -29,7 +29,7 @@
                     <div class="card-body">
                         @component('components.alert-danger')
                         @endcomponent
-                        <form action="{{ route('students.update', $student->id) }}" method="POST">
+                        <form action="{{ route('students.update', $student->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method("PUT")
                             <div class="row">
@@ -146,6 +146,18 @@
                                     @enderror
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer03">Photo Profil</label>
+                                    <input type="file" class="form-control" name="photo_profil">
+                                    @error('photo_profil')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <img src="{{ asset($student->photo_profil) }}" height="100px">
+                                </div>
+                            </div>
                             <hr class="mt-4 mb-4">
                             <h6 class="pb-2">Akun Siswa</h6>
                             <hr class="mb-2">
@@ -172,6 +184,32 @@
                                     <input class="form-control @error('password') is-invalid @enderror"
                                         name="password_confirmation" id="validationServer05" type="password">
                                     @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <hr class="mt-4 mb-4">
+                            <h6 class="pb-2">Pendaftaran Siswa</h6>
+                            <hr class="mb-2">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer01">Tanggal Daftar</label>
+                                    <input class="form-control @error('register_date') is-invalid @enderror" name="register_date"
+                                        id="validationServer01" type="date" value="{{ old('register_date', $student->register_date) }}"
+                                        required="">
+                                    @error('register_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="validationServer01">Status</label>
+                                    <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                        <option value="">Pilih Status</option>
+                                        @foreach ($status as $index => $item)
+                                            <option value="{{ $index }}" @if($index == old('status',$student->status)) selected @endif>{{ $item }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('status')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
