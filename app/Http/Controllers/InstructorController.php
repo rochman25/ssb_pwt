@@ -80,7 +80,8 @@ class InstructorController extends Controller
      */
     public function show($id)
     {
-        //
+        $instructor = Instructor::find($id);
+        return view('pages.instructors.show',compact('instructor'));
     }
 
     /**

@@ -53,11 +53,14 @@
                                             <td>{{ $item->days }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i:s') }}</td>
                                             <td>
+                                                <a href="{{ route('schedules.show',$item->id) }}" class="btn btn-sm btn-info"><i class="fa fa-eye"></i> Detail</a>
                                                 <a href="{{ route('schedules.edit', $item->id) }}"
                                                     class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit</a>
+                                                @hasrole('Admin')
                                                 <button data-url="{{ route('schedules.destroy', $item->id) }}"
                                                     class="btn btn-sm btn-danger btn-hapus"><i class="fa fa-trash"></i>
                                                     Hapus</button>
+                                                @endhasrole
                                             </td>
                                         </tr>
                                     @empty

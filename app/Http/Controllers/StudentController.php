@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
 class StudentController extends Controller
@@ -30,7 +32,8 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return view('pages.students.create');
+        $status = ["acc" => "Diterima","fail" => "Gagal", "pending" => "Sedang Diproses"];
+        return view('pages.students.create',compact('status'));
     }
 
     /**
@@ -54,7 +57,9 @@ class StudentController extends Controller
             'phone_number' => 'nullable|numeric|unique:students,phone_number',
             'username' => 'required|alpha_dash|unique:users,username',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|confirmed'
+            'password' => 'required|confirmed',
+            'register_date' => 'required|date',
+            'status' => 'required'
         ]);
         try {
             DB::beginTransaction();
@@ -65,8 +70,14 @@ class StudentController extends Controller
             $role = Role::where('name','siswa')->first();
             $user->assignRole([$role->id]);
             $user->markEmailAsVerified();
-            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number']);
+            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number','register_date','status']);
             $requestData['user_id'] = $user->id;
+            if($request->hasfile('photo_profil')){
+                $filename = uniqid() . "." . $request->file("photo_profil")->extension();
+                $path = $request->file("photo_profil")->storeAs('public/students', $filename);
+                $url = Storage::url($path);
+                $requestData['photo_profil'] = $url;
+            }
             Student::create($requestData);
 
             DB::commit();
@@ -85,7 +96,8 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        //
+        $student = Student::find($id);
+        return view('pages.students.show',compact('student'));
     }
 
     /**
@@ -97,7 +109,8 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::find($id);
-        return view('pages.students.edit', compact('student'));
+        $status = ["acc" => "Diterima","fail" => "Gagal", "pending" => "Sedang Diproses"];
+        return view('pages.students.edit', compact('student','status'));
     }
 
     /**
@@ -123,7 +136,9 @@ class StudentController extends Controller
             'phone_number' => 'nullable|numeric|unique:students,phone_number,'.$id,
             'username' => 'required|alpha_dash|unique:users,username,'.$student->user_id,
             'email' => 'required|email|unique:users,email,'.$student->user_id,
-            'password' => 'nullable|confirmed'
+            'password' => 'nullable|confirmed',
+            'register_date' => 'required|date',
+            'status' => 'required'
         ]);
         try {
             DB::beginTransaction();
@@ -133,7 +148,16 @@ class StudentController extends Controller
                 $userData['password'] = Hash::make($request->input('password'));   
             }
             User::where('id',$student->user_id)->update($userData);
-            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number']);
+            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number','register_date','status']);
+            if($request->hasfile('photo_profil')){
+                $file = explode("/", $student->photo_profil);
+                Storage::delete('public/students/' . $file[array_key_last($file)]);
+
+                $filename = uniqid() . "." . $request->file("photo_profil")->extension();
+                $path = $request->file("photo_profil")->storeAs('public/students', $filename);
+                $url = Storage::url($path);
+                $requestData['photo_profil'] = $url;
+            }
             $student->update($requestData);
             DB::commit();
             return redirect()->route('students.index')->with('success', $this->context . ' berhasil disimpan');
@@ -154,6 +178,8 @@ class StudentController extends Controller
         try{
             DB::beginTransaction();
             $student = Student::find($id);
+            $file = explode("/", $student->photo_profil);
+            Storage::delete('public/students/' . $file[array_key_last($file)]);
             $student->delete();
             DB::commit();
             $success = true;      
@@ -163,4 +189,30 @@ class StudentController extends Controller
             return response()->json(['status' => false,'errors' => $e->getMessage()]);
         }
     }
+
+    public function updateStudent(Request $request, $id){
+        $request->validate([
+            'fullname' => 'required',
+            'gender' => 'required',
+            'dob' => 'required|date',
+            'pob' => 'required',
+            'address' => 'required',
+            'parent_name' => 'required',
+            'parent_address' => 'required',
+            'parent_phone_number' => 'required|unique:students,parent_phone_number,'.$id,
+            'phone_number' => 'nullable|numeric|unique:students,phone_number,'.$id,
+        ]);
+        try {
+            DB::beginTransaction();
+            $student = Student::find($id);
+            $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number']);
+            $student->update($requestData);
+            DB::commit();
+            return redirect()->back()->with('success', 'Biodata berhasil diperbarui');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
+        }
+    }
+
 }

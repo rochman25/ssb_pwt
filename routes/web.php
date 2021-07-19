@@ -55,10 +55,15 @@ Route::middleware(['auth','verified'])->group(function(){
     })->name('/');
     Route::get('roles',[RoleController::class,'index'])->name('roles.index');
     Route::resource('users', UserController::class);
+    Route::put('students\{id}\biodata',[StudentController::class,'updateStudent'])->name('students.update.biodata');
     Route::resource('students', StudentController::class);
     Route::resource('classes', ClassController::class);
     Route::resource('instructors', InstructorController::class);
+    Route::get('schedules/{id}/detail/create',[ScheduleController::class,'createDetail'])->name('schedules.detail.create');
+    Route::post('schedules/{id}/detail/store',[ScheduleController::class,'storeDetail'])->name('schedules.detail.store');
+    Route::get('schedules/{id}/detail/json',[ScheduleController::class,'getDetailScheduleJson'])->name('schedules.detail.json');
     Route::resource('schedules', ScheduleController::class);
+    Route::post('student_payments/{id}/student',[StudentPaymentController::class,'storeStudent'])->name('student_payments.store.student');
     Route::resource('student_payments', StudentPaymentController::class);
 });
 

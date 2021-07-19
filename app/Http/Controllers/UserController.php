@@ -110,6 +110,9 @@ class UserController extends Controller
             $user->assignRole([$request->input('role')]);
             $user->update($userData);
             DB::commit();
+            if($user->hasRole('siswa')){
+                return redirect()->back()->with('success','Akun berhasil diperbarui');
+            }
             return redirect()->route('users.index')->with('success',$this->context.' berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -137,4 +140,5 @@ class UserController extends Controller
             return response()->json(['status' => false,'errors' => $e->getMessage()]);
         }
     }
+
 }

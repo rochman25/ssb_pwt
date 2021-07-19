@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use App\Models\StudentPayment;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class StudentPaymentController extends Controller
 {
@@ -28,6 +31,10 @@ class StudentPaymentController extends Controller
      */
     public function create()
     {
+        $user = User::find(Auth::user()->id);
+        if($user->hasRole('siswa')){
+            return view('pages.student_payments.create_student');            
+        }
         $students = Student::all();
         $status = ['pending','lunas','belum lunas'];
         return view('pages.student_payments.create',compact('students','status'));
@@ -67,7 +74,11 @@ class StudentPaymentController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        if($user->hasRole('siswa')){
+            $payments = StudentPayment::where('student_id',$user->student->id)->get();
+            return view('pages.student_payments.index_student',compact('payments'));
+        }
     }
 
     /**
@@ -131,4 +142,33 @@ class StudentPaymentController extends Controller
             return response()->json(['status' => false,'errors' => $e->getMessage()]);
         }
     }
+
+    public function storeStudent(Request $request,$id){
+        $request->validate([
+            'month' => 'required',
+            'payment_date' => 'required|date',
+            'amount' => 'required|numeric'
+        ]);
+        try {
+            DB::beginTransaction();
+            $student_id = Auth::user()->student->id;
+            $requestData = $request->only(['month','payment_date','amount']);
+            $requestData['status'] = 'pending';
+            $requestData['student_id'] = $student_id;
+            $requestData['description'] = "Pembayaran SPP";
+            if($request->hasfile('payment_proof')){
+                $filename = uniqid() . "." . $request->file("payment_proof")->extension();
+                $path = $request->file("payment_proof")->storeAs('public/payments', $filename);
+                $url = Storage::url($path);
+                $requestData['payment_proof'] = $url;
+            }
+            StudentPayment::create($requestData);
+            DB::commit();
+            return redirect()->route('student_payments.show',Auth::user()->id)->with('success', $this->context . ' berhasil disimpan');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
+        }
+    }
+
 }

@@ -14,4 +14,8 @@ class Schedule extends Model
         return $this->belongsTo(ClassInstructor::class,'class_instructor_id');
     }
 
+    public function details(){
+        return $this->hasMany(ScheduleDetail::class,'schedule_id');
+    }
+
 }
