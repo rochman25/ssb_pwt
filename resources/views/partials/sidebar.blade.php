@@ -57,6 +57,23 @@
                 </li>
                 @endhasrole
 
+                @hasrole('instructor')
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'instructors.show' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('instructors.show',Auth::user()->instructor->id) }}">
+                        <i data-feather="user"></i>
+                        <span class="lan-3"> Biodata Pelatih </span>
+                    </a>
+                </li>
+                <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title {{ Route::currentRouteName() == 'schedules.index' ? 'active' : '' }}"
+                        style="cursor: pointer;" href="{{ route('schedules.index') }}">
+                        <i data-feather="calendar"></i>
+                        <span class="lan-3"> Jadwal </span>
+                    </a>
+                </li>
+                @endhasrole
+
                 @hasrole('Admin')
                 <li class="sidebar-main-title">
                     <div>
