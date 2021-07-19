@@ -43,7 +43,16 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer02">Bulan</label>
+                                    <input type="month"
+                                        class="custom-select form-control form-control @error('month') is-invalid @enderror"
+                                        id="validationServer04" name="month" value="{{ old('month') }}" required="">
+                                    @error('month')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
                                     <label for="validationServer02">Jumlah Minggu</label>
                                     <input type="number"
                                         class="custom-select form-control form-control @error('week') is-invalid @enderror"
