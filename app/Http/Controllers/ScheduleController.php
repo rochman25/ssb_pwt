@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\DB;
 class ScheduleController extends Controller
 {
     private $context = "Jadwal Latihan";
+    public $days = [
+        "Sunday" => "Minggu",
+        "Monday" => "Senin",
+        "Tuesday" => "Selasa",
+        "Wednesday" => "Rabu",
+        "Thursday" => "Kamis",
+        "Friday" => "Jum'at",
+        "Saturday" => "Sabtu"
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +30,7 @@ class ScheduleController extends Controller
     public function index()
     {
         $schedules = Schedule::paginate(10);
-        return view('pages.schedules.index',compact('schedules'));
+        return view('pages.schedules.index', compact('schedules'));
     }
 
     /**
@@ -32,8 +41,8 @@ class ScheduleController extends Controller
     public function create()
     {
         $classes = ClassInstructor::all();
-        $days = ["Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu","Minggu"];
-        return view('pages.schedules.create',compact('classes','days'));
+        $days = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Minggu"];
+        return view('pages.schedules.create', compact('classes', 'days'));
     }
 
     /**
@@ -52,8 +61,8 @@ class ScheduleController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id','week','estimate_time']);
-            $requestData['days'] = implode(",",$request->input('days'));
+            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time']);
+            $requestData['days'] = implode(",", $request->input('days'));
             Schedule::create($requestData);
             DB::commit();
             return redirect()->route('schedules.index')->with('success', $this->context . ' berhasil disimpan');
@@ -72,14 +81,14 @@ class ScheduleController extends Controller
     public function show($id)
     {
         $user = User::find(Auth::user()->id);
-        if($user->hasRole('siswa')){
+        if ($user->hasRole('siswa')) {
             $schedule = Schedule::find($id);
-            $title = "Jadwal Latihan  ".$user->student->fullname;
-        }else{
+            $title = "Jadwal Latihan  " . $user->student->fullname;
+        } else {
             $schedule = Schedule::find($id);
-            $title = "Jadwal Latihan Kelas ".$schedule->class->class->name;
+            $title = "Jadwal Latihan Kelas " . $schedule->class->class->name;
         }
-        return view('pages.schedules.show',compact('schedule','title'));
+        return view('pages.schedules.show', compact('schedule', 'title'));
     }
 
     /**
@@ -92,8 +101,8 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::find($id);
         $classes = ClassInstructor::all();
-        $days = ["Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu","Minggu"];
-        return view('pages.schedules.edit',compact('schedule','classes','days'));
+        $days = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Minggu"];
+        return view('pages.schedules.edit', compact('schedule', 'classes', 'days'));
     }
 
     /**
@@ -113,9 +122,9 @@ class ScheduleController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id','week','estimate_time']);
-            $requestData['days'] = implode(",",$request->input('days'));
-            Schedule::where('id',$id)->update($requestData);
+            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time']);
+            $requestData['days'] = implode(",", $request->input('days'));
+            Schedule::where('id', $id)->update($requestData);
             DB::commit();
             return redirect()->route('schedules.index')->with('success', $this->context . ' berhasil disimpan');
         } catch (\Throwable $th) {
@@ -132,26 +141,28 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             DB::beginTransaction();
             $schedule = Schedule::find($id);
             $schedule->delete();
             DB::commit();
-            $success = true;      
-            return response()->json(['status'=>$success]);
-        }catch(\Throwable $e){
+            $success = true;
+            return response()->json(['status' => $success]);
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['status' => false,'errors' => $e->getMessage()]);
+            return response()->json(['status' => false, 'errors' => $e->getMessage()]);
         }
     }
 
-    public function createDetail(Request $request,$id){
+    public function createDetail(Request $request, $id)
+    {
         $schedule = Schedule::find($id);
-        $days = explode(",",$schedule->days);
-        return view('pages.schedules.create_detail',compact('schedule','days'));
+        $days = explode(",", $schedule->days);
+        return view('pages.schedules.create_detail', compact('schedule', 'days'));
     }
 
-    public function storeDetail(Request $request, $id){
+    public function storeDetail(Request $request, $id)
+    {
         $request->validate([
             'day.*' => 'required',
             'activity.*' => 'required'
@@ -159,7 +170,7 @@ class ScheduleController extends Controller
         try {
             DB::beginTransaction();
             $requestData = [];
-            foreach($request->input('days') as $index => $item){
+            foreach ($request->input('days') as $index => $item) {
                 $requestData[] = [
                     'day' => $item,
                     'activity' => $request->input('activity')[$index],
@@ -170,37 +181,43 @@ class ScheduleController extends Controller
             }
             ScheduleDetail::insert($requestData);
             DB::commit();
-            return redirect()->route('schedules.show',$id)->with('success','Kegiatan berhasil ditambahkan');
+            return redirect()->route('schedules.show', $id)->with('success', 'Kegiatan berhasil ditambahkan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
         }
     }
 
-    public function getDetailScheduleJson(Request $request){
+    public function getDetailScheduleJson(Request $request)
+    {
         $monthNow = date("Y-m");
-        $schedule = Schedule::with(['details'])->where('month',$monthNow)->get();
+        $schedule = Schedule::with(['details'])->where('month', $monthNow)->first();
+        $totalDays = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
+        $schedules = [];
+        for ($i = 1; $i <= $totalDays; $i++) {
+            $date = date("Y") . "-" . date("m") . "-" . $i;
+            $day = date('l', strtotime($date));
+            $scheduleDays = explode(",", $schedule->days);
+            if (in_array($this->days[$day], $scheduleDays)) {
+                foreach ($schedule->details as $index_s => $item_s) {
+                    if ($item_s->day == $this->days[$day]) {
+                        $schedules[] = [
+                            'id' => '1',
+                            'calendarId' => '1',
+                            'title' => $schedule->class->class->name,
+                            'body' => $item_s->activity,
+                            'category' => 'time',
+                            'dueDateClass' => '',
+                            'bgColor' => 'green',
+                            'start' => $date,
+                            'end' => $date
+                        ];
+                    }
+                }
+            }
+        }
         // dd($schedule->toArray());
-        $json = [[
-            'id' => '1',
-            'calendarId' => '1',
-            'title' => 'my schedule',
-            'category' => 'time',
-            'dueDateClass' => '',
-            'start' => '2021-07-18T22:30:00+09:00',
-            'end' => '2021-07-20T02:30:00+09:00'
-        ],
-        [
-            'id' => '2',
-            'calendarId' => '1',
-            'title' => 'my second schedule',
-            'category' => 'time',
-            'dueDateClass' => '',
-            'start' => '2021-07-16T22:30:00+09:00',
-            'end' => '2021-07-21T02:30:00+09:00'
-        ]
-        ];
-        return response()->json($json);
+        // dd($days);
+        return response()->json($schedules);
     }
-
 }
