@@ -59,10 +59,11 @@ class ScheduleController extends Controller
             'week' => 'required',
             'days.*' => 'required',
             'estimate_time' => 'required',
+            'month' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time']);
+            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time','month']);
             $requestData['days'] = implode(",", $request->input('days'));
             Schedule::create($requestData);
             DB::commit();
@@ -120,10 +121,11 @@ class ScheduleController extends Controller
             'week' => 'required',
             'days.*' => 'required',
             'estimate_time' => 'required',
+            'month' => 'required'
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time']);
+            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time','month']);
             $requestData['days'] = implode(",", $request->input('days'));
             Schedule::where('id', $id)->update($requestData);
             DB::commit();

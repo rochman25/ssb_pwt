@@ -27,8 +27,14 @@
                     <div class="d-flex">
                         <div id="lnb">
                             <div class="lnb-new-schedule text-center">
+								@hasrole('Admin')
                                 <a href="{{ route('schedules.detail.create', isset($schedule->id) ? $schedule->id : Auth::user()->id) }}"
                                     class="btn btn-sm btn-primary" id="btn-new-schedule">Tambah Kegiatan</a>
+								@endhasrole
+								@hasrole('instructor')
+                                <a href="{{ route('schedules.detail.create', isset($schedule->id) ? $schedule->id : Auth::user()->id) }}"
+                                    class="btn btn-sm btn-primary" id="btn-new-schedule">Tambah Kegiatan</a>
+								@endhasrole
                             </div>
                         </div>
                         <div id="right">
