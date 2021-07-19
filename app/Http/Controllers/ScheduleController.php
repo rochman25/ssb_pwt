@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ClassInstructor;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -188,30 +189,69 @@ class ScheduleController extends Controller
         }
     }
 
-    public function getDetailScheduleJson(Request $request)
+    public function getDetailScheduleJson(Request $request,$id)
     {
+        $user = User::find(Auth::user()->id);
         $monthNow = date("Y-m");
-        $schedule = Schedule::with(['details'])->where('month', $monthNow)->first();
-        $totalDays = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
         $schedules = [];
-        for ($i = 1; $i <= $totalDays; $i++) {
-            $date = date("Y") . "-" . date("m") . "-" . $i;
-            $day = date('l', strtotime($date));
-            $scheduleDays = explode(",", $schedule->days);
-            if (in_array($this->days[$day], $scheduleDays)) {
-                foreach ($schedule->details as $index_s => $item_s) {
-                    if ($item_s->day == $this->days[$day]) {
-                        $schedules[] = [
-                            'id' => '1',
-                            'calendarId' => '1',
-                            'title' => $schedule->class->class->name,
-                            'body' => $item_s->activity,
-                            'category' => 'time',
-                            'dueDateClass' => '',
-                            'bgColor' => 'green',
-                            'start' => $date,
-                            'end' => $date
-                        ];
+        if($user->hasRole(['instructor','Admin'])){
+            $schedule = Schedule::with(['details'])->where('month', $monthNow)->where('id',$id)->first();
+        }else{
+            $student = Student::find(Auth::user()->student->id);
+            $schedule = Schedule::with(['details','class' => function($query)use($student){
+                $query->where('class_id',$student->class->id);
+            }])->where('month', $monthNow)->get();
+            // dd($schedule);
+        }
+        $totalDays = cal_days_in_month(CAL_GREGORIAN, date("m"), date("Y"));
+        if($user->hasRole(['instructor','Admin'])){
+            for ($i = 1; $i <= $totalDays; $i++) {
+                $date = date("Y") . "-" . date("m") . "-" . $i;
+                $day = date('l', strtotime($date));
+                $scheduleDays = explode(",", $schedule->days);
+                if (in_array($this->days[$day], $scheduleDays)) {
+                    foreach ($schedule->details as $index_s => $item_s) {
+                        if ($item_s->day == $this->days[$day]) {
+                            $schedules[] = [
+                                'id' => '1',
+                                'calendarId' => '1',
+                                'title' => $schedule->class->class->name,
+                                'body' => $item_s->activity,
+                                'category' => 'time',
+                                'dueDateClass' => '',
+                                'bgColor' => 'green',
+                                'start' => $date,
+                                'end' => $date
+                            ];
+                        }
+                    }
+                }
+            }
+        }else{
+            for ($i = 1; $i <= $totalDays; $i++) {
+                $date = date("Y") . "-" . date("m") . "-" . $i;
+                $day = date('l', strtotime($date));
+                foreach($schedule as $index_se => $item_se){
+                    $scheduleDays = explode(",", $item_se->days);
+                    if (in_array($this->days[$day], $scheduleDays)) {
+                        // dd($item_se->class);
+                        foreach ($item_se->details as $index_s => $item_s) {
+                            // dd($item_se->class);
+                            if ($item_s->day == $this->days[$day]) {
+                                $schedules[] = [
+                                    'id' => '1',
+                                    'calendarId' => '1',
+                                    'title' => $student->class->class->name,
+                                    'body' => $item_s->activity,
+                                    'category' => 'time',
+                                    'dueDateClass' => '',
+                                    'bgColor' => 'green',
+                                    'start' => $date,
+                                    'end' => $date
+                                ];
+                                // dd($schedules);
+                            }
+                        }
                     }
                 }
             }
