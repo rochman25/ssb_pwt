@@ -2,14 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Classes;
+use App\Models\Instructor;
+use App\Models\Schedule;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     //
 
     public function index(Request $request){
-        return view('pages.dashboard.admin');
+        $user = User::find(Auth::user()->id);
+        if($user->hasrole('siswa')){
+            $student = Student::find(Auth::user()->student->id);
+            // dd($student->class);
+            $jadwal = Schedule::with(['details','class' => function($query)use($student){
+                $query->where('class_id',$student->class->class_id);
+            }])->orderBy('created_at','ASC')->get();
+            // dd($jadwal->toArray());
+            return view('pages.dashboard.siswa',compact('jadwal'));
+        }else if($user->hasrole('instructor')){
+            $instructor = Instructor::find(Auth::user()->instructor->id);
+            $jadwal = Schedule::with(['details','class' => function($query)use($instructor){
+                $query->where('class_id',$instructor->class->class_id);
+            }])->orderBy('created_at','ASC')->get();
+            return view('pages.dashboard.instructor',compact('jadwal'));
+        }
+        $totalSiswa = Student::count();
+        $totalPelatih = Instructor::count();
+        $totalUser = User::count();
+        $totalKelas = Classes::count();
+        return view('pages.dashboard.admin',compact('totalSiswa','totalPelatih','totalUser','totalKelas'));
     }
 
 }

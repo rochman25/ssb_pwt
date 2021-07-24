@@ -13,4 +13,9 @@ class Instructor extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function class(){
+        return $this->hasOne(ClassInstructor::class,'instructor_id');
+    }
+
 }
