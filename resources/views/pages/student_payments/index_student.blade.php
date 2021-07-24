@@ -25,6 +25,7 @@
                     <p>berikut list data pembayaran spp anda.</p>
 				</div>
 				<div class="card-body">
+                    <a href="{{ route('student_payments.print',Auth::user()->student->id) }}" class="btn btn-sm btn-info" style="float: right; margin-bottom:10px"><i class="fa fa-print"></i> Cetak</a>
 					<div class="table-responsive">
                         <table class="table">
                             <thead class="thead-light">
@@ -33,7 +34,7 @@
                                     <th scope="col">Bulan</th>
                                     <th scope="col">Tanggal Pembayaran</th>
                                     <th scope="col">Status</th>
-                                    <th scope="col">Terakhir diupdate</th>
+                                    <th scope="col">Nominal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,7 +44,7 @@
                                         <td>{{ \Carbon\Carbon::parse($item->month)->format("M-Y") }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->payment_date)->format('d-m-Y') }}</td>
                                         <td>{{ $item->status }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i:s') }}</td>
+                                        <td>{{ "Rp ".number_format($item->amount,0,".",".") }}</td>
                                     </tr>
                                 @empty
                                     <tr>

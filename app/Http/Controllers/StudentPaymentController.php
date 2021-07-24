@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\StudentPayment;
 use App\Models\User;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +23,7 @@ class StudentPaymentController extends Controller
     public function index()
     {
         $payments = StudentPayment::paginate(10);
-        return view('pages.student_payments.index',compact('payments'));
+        return view('pages.student_payments.index', compact('payments'));
     }
 
     /**
@@ -32,12 +34,12 @@ class StudentPaymentController extends Controller
     public function create()
     {
         $user = User::find(Auth::user()->id);
-        if($user->hasRole('siswa')){
-            return view('pages.student_payments.create_student');            
+        if ($user->hasRole('siswa')) {
+            return view('pages.student_payments.create_student');
         }
         $students = Student::all();
-        $status = ['pending','lunas','belum lunas'];
-        return view('pages.student_payments.create',compact('students','status'));
+        $status = ['pending', 'lunas', 'belum lunas'];
+        return view('pages.student_payments.create', compact('students', 'status'));
     }
 
     /**
@@ -57,7 +59,7 @@ class StudentPaymentController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            StudentPayment::create($request->only(['student_id','payment_date','amount','description','status']));
+            StudentPayment::create($request->only(['student_id', 'payment_date', 'amount', 'description', 'status']));
             DB::commit();
             return redirect()->route('student_payments.index')->with('success', $this->context . ' berhasil disimpan');
         } catch (\Throwable $th) {
@@ -75,9 +77,9 @@ class StudentPaymentController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        if($user->hasRole('siswa')){
-            $payments = StudentPayment::where('student_id',$user->student->id)->get();
-            return view('pages.student_payments.index_student',compact('payments'));
+        if ($user->hasRole('siswa')) {
+            $payments = StudentPayment::where('student_id', $user->student->id)->get();
+            return view('pages.student_payments.index_student', compact('payments'));
         }
     }
 
@@ -91,8 +93,8 @@ class StudentPaymentController extends Controller
     {
         $payment = StudentPayment::find($id);
         $students = Student::all();
-        $status = ['pending','lunas','belum lunas'];
-        return view('pages.student_payments.edit',compact('payment','status','students'));
+        $status = ['pending', 'lunas', 'belum lunas'];
+        return view('pages.student_payments.edit', compact('payment', 'status', 'students'));
     }
 
     /**
@@ -113,7 +115,7 @@ class StudentPaymentController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            StudentPayment::where('id',$id)->update($request->only(['student_id','payment_date','amount','description','status']));
+            StudentPayment::where('id', $id)->update($request->only(['student_id', 'payment_date', 'amount', 'description', 'status']));
             DB::commit();
             return redirect()->route('student_payments.index')->with('success', $this->context . ' berhasil disimpan');
         } catch (\Throwable $th) {
@@ -130,20 +132,21 @@ class StudentPaymentController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             DB::beginTransaction();
             $payment = StudentPayment::find($id);
             $payment->delete();
             DB::commit();
-            $success = true;      
-            return response()->json(['status'=>$success]);
-        }catch(\Throwable $e){
+            $success = true;
+            return response()->json(['status' => $success]);
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['status' => false,'errors' => $e->getMessage()]);
+            return response()->json(['status' => false, 'errors' => $e->getMessage()]);
         }
     }
 
-    public function storeStudent(Request $request,$id){
+    public function storeStudent(Request $request, $id)
+    {
         $request->validate([
             'month' => 'required',
             'payment_date' => 'required|date',
@@ -152,11 +155,11 @@ class StudentPaymentController extends Controller
         try {
             DB::beginTransaction();
             $student_id = Auth::user()->student->id;
-            $requestData = $request->only(['month','payment_date','amount']);
+            $requestData = $request->only(['month', 'payment_date', 'amount']);
             $requestData['status'] = 'pending';
             $requestData['student_id'] = $student_id;
             $requestData['description'] = "Pembayaran SPP";
-            if($request->hasfile('payment_proof')){
+            if ($request->hasfile('payment_proof')) {
                 $filename = uniqid() . "." . $request->file("payment_proof")->extension();
                 $path = $request->file("payment_proof")->storeAs('public/payments', $filename);
                 $url = Storage::url($path);
@@ -164,11 +167,21 @@ class StudentPaymentController extends Controller
             }
             StudentPayment::create($requestData);
             DB::commit();
-            return redirect()->route('student_payments.show',Auth::user()->id)->with('success', $this->context . ' berhasil disimpan');
+            return redirect()->route('student_payments.show', Auth::user()->id)->with('success', $this->context . ' berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
         }
     }
 
+    public function printPaymentStudent(Request $request, $id)
+    {
+        try {
+            $student = Student::find($id);
+            $pdf = PDF::loadView('pages.student_payments.print_out',compact('student'));
+            return $pdf->stream();
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+    }
 }
