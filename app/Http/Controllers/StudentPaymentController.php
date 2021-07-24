@@ -23,7 +23,8 @@ class StudentPaymentController extends Controller
     public function index()
     {
         $payments = StudentPayment::paginate(10);
-        return view('pages.student_payments.index', compact('payments'));
+        $students = Student::all();
+        return view('pages.student_payments.index', compact('payments','students'));
     }
 
     /**

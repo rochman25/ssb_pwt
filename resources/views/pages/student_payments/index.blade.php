@@ -2,6 +2,7 @@
 @section('title', 'Sample Page')
 
 @section('css')
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/datatables.css')}}">
 @endsection
 
 @section('style')
@@ -24,14 +25,50 @@
                     <div class="card-header">
                         <h5>Data Pembayaran SPP Siswa</h5>
                         <span>berikut list data pembayaran spp siswa.</span>
-                        <a href="{{ route('student_payments.create') }}" class="btn btn-primary mt-3"><i class="fa fa-plus"></i>
+                        <a href="{{ route('student_payments.create') }}" class="btn btn-primary mt-3"><i
+                                class="fa fa-plus"></i>
                             Tambah</a>
                     </div>
                     <div class="card-body">
                         @component('components.alert-success')
                         @endcomponent
+                        {{-- <a href="{{ '#' }}" class="btn btn-sm btn-info"
+                            style="float: right; margin-bottom:10px"><i class="fa fa-print"></i> Cetak</a> --}}
+                        <!-- Vertically centered modal-->
+                        <button class="btn btn-sm btn-primary" style="float: right; margin-bottom:10px" type="button"
+                            data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-print"></i>
+                            Cetak</a></button>
+                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenter" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Cetak Kartu SPP</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
+                                                aria-hidden="true">×</span></button>
+                                    </div>
+                                    <form action="" id="formCetak" method="GET">
+                                        <div class="modal-body">
+                                            <select name="student_id" id="student_id" class="form-control">
+                                                <option value="">-- Pilih Siswa --</option>
+                                                @foreach ($students as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        data-url="{{ route('student_payments.print', $item->id) }}">
+                                                        {{ $item->fullname }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-secondary" type="button"
+                                                data-dismiss="modal">Close</button>
+                                            <button class="btn btn-primary" type="submit">Cetak</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="basic-1">
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
@@ -40,7 +77,7 @@
                                         <th scope="col">Deskripsi</th>
                                         <th scope="col">Jumlah</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Terakhir diupdate</th>
+                                        <th scope="col">Kode Kelas</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
@@ -53,7 +90,8 @@
                                             <td>{{ $item->description }}</td>
                                             <td>{{ $item->amount }}</td>
                                             <td>{{ $item->status }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i:s') }}</td>
+                                            <td>{{ $item->student->class->class->name }}
+                                            </td>
                                             <td>
                                                 <a href="{{ route('student_payments.edit', $item->id) }}"
                                                     class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit</a>
@@ -78,57 +116,64 @@
 @endsection
 
 @section('script')
-    <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            // Delete a record
-            $('.btn-hapus').on('click', function(e) {
-                // e.preventDefault();
-                swal({
-                    title: '{{ 'Hapus Data' }}',
-                    text: '{{ 'Apakah Anda Yakin Menghapus Data Ini?' }}',
-                    icon: 'error',
-                    buttons: {
-                        cancel: {
-                            text: 'No',
-                            value: null,
-                            visible: true,
-                            className: 'btn btn-default',
-                            closeModal: true,
+<script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        //handle select student id
+        $('#student_id').on('change', function(e) {
+            // alert($(this).find(':selected').data('url'))
+            $('#formCetak').attr('action', $(this).find(':selected').data('url'));
+        });
+        // Delete a record
+        $('.btn-hapus').on('click', function(e) {
+            // e.preventDefault();
+            swal({
+                title: '{{ 'Hapus Data' }}',
+                text: '{{ 'Apakah Anda Yakin Menghapus Data Ini?' }}',
+                icon: 'error',
+                buttons: {
+                    cancel: {
+                        text: 'No',
+                        value: null,
+                        visible: true,
+                        className: 'btn btn-default',
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: 'Yes',
+                        value: true,
+                        visible: true,
+                        className: 'btn btn-danger',
+                        closeModal: true
+                    }
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: $(this).data('url'),
+                        data: {
+                            "_token": "{{ csrf_token() }}"
                         },
-                        confirm: {
-                            text: 'Yes',
-                            value: true,
-                            visible: true,
-                            className: 'btn btn-danger',
-                            closeModal: true
-                        }
-                    }
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            type: "DELETE",
-                            url: $(this).data('url'),
-                            data: {
-                                "_token": "{{ csrf_token() }}"
-                            },
-                            success: function(data) {
-                                console.log(data);
-                                if (data.status) {
-                                    swal("{{ 'Data Berhasil Dihapus' }}", {
-                                        icon: "success",
-                                    });
-                                    window.location.reload();
-                                } else {
-                                    swal("{{ 'Data Gagal Dihapus' }}", {
-                                        icon: "error",
-                                    });
-                                }
+                        success: function(data) {
+                            console.log(data);
+                            if (data.status) {
+                                swal("{{ 'Data Berhasil Dihapus' }}", {
+                                    icon: "success",
+                                });
+                                window.location.reload();
+                            } else {
+                                swal("{{ 'Data Gagal Dihapus' }}", {
+                                    icon: "error",
+                                });
                             }
-                        });
-                    }
-                });
+                        }
+                    });
+                }
             });
         });
-    </script>
+    });
+</script>
+<script src="{{asset('assets/js/datatable/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('assets/js/datatable/datatables/datatable.custom.js')}}"></script>
 @endsection
