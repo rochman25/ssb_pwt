@@ -33,4 +33,8 @@ class Student extends Model
         return $this->hasOne(ClassStudent::class,'student_id');
     }
 
+    public function payments(){
+        return $this->hasMany(StudentPayment::class,'student_id');
+    }
+
 }

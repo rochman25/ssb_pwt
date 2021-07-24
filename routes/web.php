@@ -64,6 +64,7 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::get('schedules/{id}/detail/json',[ScheduleController::class,'getDetailScheduleJson'])->name('schedules.detail.json');
     Route::resource('schedules', ScheduleController::class);
     Route::post('student_payments/{id}/student',[StudentPaymentController::class,'storeStudent'])->name('student_payments.store.student');
+    Route::get('student_payments/{id}/print',[StudentPaymentController::class,'printPaymentStudent'])->name('student_payments.print');
     Route::resource('student_payments', StudentPaymentController::class);
 });
 
