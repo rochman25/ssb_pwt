@@ -25,9 +25,7 @@
                         <div class="media faq-widgets">
                             <div class="media-body">
                                 <h5>Selamat Datang</h5>
-                                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
-                                    dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
-                                    nascetur ridiculus mus.</p>
+                                <p>Semoga Aktifitas Mengajarnya Lancar dan Menyenangkan.</p>
                             </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" class="feather feather-file-text">
@@ -45,7 +43,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h5>Jadwal Latihan</h5>
-                        <span>lorem ipsum dolor sit amet, consectetur adipisicing elit</span>
+                        <span>berikut jadwal latihan terbaru anda:</span>
                     </div>
                     <div class="card-body">
                         @foreach ($jadwal as $index => $item)
@@ -55,12 +53,17 @@
                                         <tr>
                                             <td class="align-middle action">
                                                 <span class="" style="font-weight: 600">
-                                                    Sedang dipelajari
+                                                    {{ \Carbon\Carbon::parse($item->month)->format('M-Y') }}
                                                 </span>
                                                 <br>
-                                                <p class="mb-0 mt-1 text-ellipsis-two-row">Belajar Fundamental Aplikasi
-                                                    Back-End
+                                                <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Kelas : ".$item->class->class->name }}
                                                 </p>
+                                                @foreach ($item->details as $item_d)
+                                                    <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Hari : ". $item_d->day }}
+                                                    </p>
+                                                    <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Kegiatan : ".$item_d->activity }}
+                                                    </p>
+                                                @endforeach
                                             </td>
                                         </tr>
                                     </tbody>
