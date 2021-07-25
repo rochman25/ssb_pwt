@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Cetak Data Siswa</title>
+    <title>Cetak Data Kelas</title>
     <style>
         .clearfix:after {
             content: "";
@@ -183,7 +183,7 @@
         <hr style="margin-right:50px;margin-left:50px;" />
         <div class="row">
             <div class="column">
-                <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">DATA SISWA</h4>
+                <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">DATA KELAS</h4>
                 <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">SEKOLAH SEPAK BOLA (SSB) INDONESIA MUDA
                     PURWOKERTO</h4>
                 {{-- <h4 style="text-align: center;margin-top:0px;margin-bottom:10px;">TAHUN
@@ -195,22 +195,19 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="service" style="text-align: center">NAMA LENGKAP</th>
-                    <th class="desc" style="text-align: center">JENIS KELAMIN</th>
-                    <th style="text-align: center">ALAMAT</th>
-                    <th style="text-align: center">KODE KELAS</th>
+                    <th class="service" style="text-align: center">KODE KELAS</th>
+                    <th class="desc" style="text-align: center">DESKRIPSI</th>
+                    <th style="text-align: center">PELATIH</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($students as $item)
+                @foreach ($classes as $item)
                     <tr>
                         <td class="service" style="text-align: center">
-                            {{ $item->fullname }}</td>
+                            {{ $item->name }}</td>
                         <td class="desc" style="text-align: center">
-                            {{ $item->gender }}</td>
-                        <td class="unit" style="text-align: center">{{ $item->address }}</td>
-                        <td class="total" style="text-align: center">
-                            {{ $item->class->class->name }}</td>
+                            {{ $item->description }}</td>
+                        <td class="unit" style="text-align: center">{{ $item->detail->instructor->name ?? "-" }}</td>
                     </tr>
                 @endforeach
             </tbody>

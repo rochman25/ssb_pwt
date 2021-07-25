@@ -9,6 +9,7 @@ use App\Models\Instructor;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class ClassController extends Controller
 {
@@ -187,6 +188,16 @@ class ClassController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'errors' => $e->getMessage()]);
+        }
+    }
+
+    public function printClasses(Request $request){
+        try {
+            $classes = Classes::all();
+            $pdf = PDF::loadView('pages.classes.print_out',compact('classes'));
+            return $pdf->stream();
+        } catch (\Throwable $th) {
+            dd($th);
         }
     }
 }
