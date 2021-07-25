@@ -55,6 +55,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'code' => 'required|unique:schedules,code',
             'class_instructor_id' => 'required',
             'week' => 'required',
             'days.*' => 'required',
@@ -63,7 +64,7 @@ class ScheduleController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time','month']);
+            $requestData = $request->only(['code','class_instructor_id', 'week', 'estimate_time','month']);
             $requestData['days'] = implode(",", $request->input('days'));
             Schedule::create($requestData);
             DB::commit();
@@ -117,6 +118,7 @@ class ScheduleController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'code' => 'required|unique:schedules,code,'.$id,
             'class_instructor_id' => 'required',
             'week' => 'required',
             'days.*' => 'required',
@@ -125,7 +127,7 @@ class ScheduleController extends Controller
         ]);
         try {
             DB::beginTransaction();
-            $requestData = $request->only(['class_instructor_id', 'week', 'estimate_time','month']);
+            $requestData = $request->only(['code','class_instructor_id', 'week', 'estimate_time','month']);
             $requestData['days'] = implode(",", $request->input('days'));
             Schedule::where('id', $id)->update($requestData);
             DB::commit();

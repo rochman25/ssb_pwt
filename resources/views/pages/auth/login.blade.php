@@ -15,8 +15,8 @@
             <div class="col-xl-5 p-0">
                 <div class="login-card">
                     <div>
-                        <div><a class="logo text-left" href="{{ route('index') }}"><img class="img-fluid for-light"
-                                    src="{{ asset('assets/images/other-images/logo-login.png') }}" alt="looginpage"><img
+                        <div><a class="logo text-center" href="{{ route('index') }}"><img class="img-fluid for-light"
+                                    src="{{ asset('assets/images/other-images/logo-login.png') }}" width="300px" alt="looginpage"><img
                                     class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo_dark.png') }}"
                                     alt="looginpage"></a></div>
                         @if (Session::has('error'))
@@ -33,7 +33,7 @@
                                     <label class="col-form-label">Username</label>
                                     <input class="form-control @error('username') is-invalid @enderror" required=""
                                         value="{{ old('username') }}" name="username" type="text"
-                                        placeholder="{{ __('messages.placeholder_username') }}">
+                                        placeholder="{{ __('Masukkan Username') }}">
                                     @error('username')
                                         <x-invalid-form-message :message="$message" />
                                     @enderror

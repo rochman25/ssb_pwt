@@ -33,7 +33,16 @@
                         <form action="{{ route('schedules.store') }}" method="POST">
                             @csrf
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-3 mb-3">
+                                    <label for="validationServer02">Kode Kegiatan</label>
+                                    <input type="text"
+                                        class="form-control form-control @error('code') is-invalid @enderror"
+                                        id="validationServer04" name="code" value="{{ old('code') }}" required="">
+                                    @error('code')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 mb-3">
                                     <label for="validationServer02">Kelas</label>
                                     <select name="class_instructor_id" class="js-example-basic-single col-sm-12">
                                         <option value="">Pilih Kelas</option>
