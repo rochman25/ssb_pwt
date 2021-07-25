@@ -58,6 +58,7 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::put('students\{id}\biodata',[StudentController::class,'updateStudent'])->name('students.update.biodata');
     Route::resource('students', StudentController::class);
     Route::resource('classes', ClassController::class);
+    Route::get('instructors/print/all',[InstructorController::class,'printInstructor'])->name('instructors.print');
     Route::resource('instructors', InstructorController::class);
     Route::get('schedules/{id}/detail/create',[ScheduleController::class,'createDetail'])->name('schedules.detail.create');
     Route::post('schedules/{id}/detail/store',[ScheduleController::class,'storeDetail'])->name('schedules.detail.store');

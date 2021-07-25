@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Instructor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
-
+use PDF;
 class InstructorController extends Controller
 {
     private $context = "Pelatih";
@@ -62,6 +64,12 @@ class InstructorController extends Controller
             $user->assignRole([$role->id]);
             $user->markEmailAsVerified();
             $requestData = $request->only(['name', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address']);
+            if($request->hasfile('photo_profil')){
+                $filename = uniqid() . "." . $request->file("photo_profil")->extension();
+                $path = $request->file("photo_profil")->storeAs('public/instructors', $filename);
+                $url = Storage::url($path);
+                $requestData['photo_profil'] = $url;
+            }
             $requestData['user_id'] = $user->id;
             Instructor::create($requestData);
             DB::commit();
@@ -126,8 +134,20 @@ class InstructorController extends Controller
             }
             User::where('id',$instructor->user_id)->update($userData);
             $requestData = $request->only(['name', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address']);
+            if($request->hasfile('photo_profil')){
+                $file = explode("/", $instructor->photo_profil);
+                Storage::delete('public/instructors/' . $file[array_key_last($file)]);
+
+                $filename = uniqid() . "." . $request->file("photo_profil")->extension();
+                $path = $request->file("photo_profil")->storeAs('public/instructors', $filename);
+                $url = Storage::url($path);
+                $requestData['photo_profil'] = $url;
+            }
             $instructor->update($requestData);
             DB::commit();
+            if(Auth::user()->hasrole('instructor')){
+                return redirect()->back()->with('success', $this->context . ' berhasil disimpan');
+            }
             return redirect()->route('instructors.index')->with('success', $this->context . ' berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -155,4 +175,15 @@ class InstructorController extends Controller
             return response()->json(['status' => false,'errors' => $e->getMessage()]);
         }
     }
+
+    public function printInstructor(Request $request){
+        try {
+            $instructors = Instructor::all();
+            $pdf = PDF::loadView('pages.instructors.print_out',compact('instructors'));
+            return $pdf->stream();
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+    }
+
 }

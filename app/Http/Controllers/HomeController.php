@@ -29,6 +29,7 @@ class HomeController extends Controller
             $jadwal = Schedule::with(['details','class' => function($query)use($instructor){
                 $query->where('class_id',$instructor->class->class_id);
             }])->orderBy('created_at','ASC')->get();
+            // dd($jadwal->toArray());
             return view('pages.dashboard.instructor',compact('jadwal'));
         }
         $totalSiswa = Student::count();
