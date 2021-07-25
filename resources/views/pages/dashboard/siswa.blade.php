@@ -56,7 +56,7 @@
                                                     {{ \Carbon\Carbon::parse($item->month)->format('M-Y') }}
                                                 </span>
                                                 <br>
-                                                <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Kelas : ".$item->class->class->name }}
+                                                <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Kelas : ". ($item->class->class->name ?? "-") }}
                                                 </p>
                                                 @foreach ($item->details as $item_d)
                                                     <p class="mb-0 mt-1 text-ellipsis-two-row">{{ "Hari : ". $item_d->day }}

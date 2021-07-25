@@ -73,6 +73,8 @@ Route::middleware(['auth','verified'])->group(function(){
     Route::post('student_payments/{id}/student',[StudentPaymentController::class,'storeStudent'])->name('student_payments.store.student');
     Route::get('student_payments/{id}/print',[StudentPaymentController::class,'printPaymentStudent'])->name('student_payments.print');
     Route::resource('student_payments', StudentPaymentController::class);
+    Route::post('/register-student',[StudentController::class,'registerStudent'])->name('students.register');
+    Route::get('/register-student/success',[StudentController::class,'successRegister'])->name('students.register.success');
 });
 
 
