@@ -17,6 +17,10 @@ class HomeController extends Controller
     public function index(Request $request){
         $user = User::find(Auth::user()->id);
         if($user->hasrole('siswa')){
+            if(!Auth::user()->student){
+                $status = ["acc" => "Diterima","fail" => "Gagal", "pending" => "Sedang Diproses"];
+                return view('pages.students.create-student',compact('status'));
+            }
             $student = Student::find(Auth::user()->student->id);
             // dd($student->class);
             $jadwal = Schedule::with(['details','class' => function($query)use($student){

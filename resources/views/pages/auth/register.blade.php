@@ -18,9 +18,9 @@
             <div class="col-xl-7 p-0">
                 <div class="login-card">
                     <div>
-                        <div><a class="logo" href="{{ route('index') }}"><img class="img-fluid for-light"
+                        <div><a class="logo" href="{{ route('index') }}"><img class="img-fluid for-light" width="250px"
                                     src="{{ asset('assets/images/other-images/logo-login.png') }}" alt="looginpage"><img
-                                    class="img-fluid for-dark" src="{{ asset('assets/images/logo/logo_dark.png') }}"
+                                    class="img-fluid for-dark" width="250px" src="{{ asset('assets/images/logo/logo_dark.png') }}"
                                     alt="looginpage"></a></div>
                         <div class="login-main">
                             <form class="theme-form" action="{{ route('register.post') }}" method="POST">
