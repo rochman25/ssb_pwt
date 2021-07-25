@@ -35,6 +35,7 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th scope="col">#</th>
+                                        <th scope="col">Kode Kegiatan</th>
                                         <th scope="col">Kelas</th>
                                         <th scope="col">Jumlah Minggu</th>
                                         <th scope="col">Estimasi Waktu (menit)</th>
@@ -47,6 +48,7 @@
                                     @forelse ($schedules as $index => $item)
                                         <tr>
                                             <th scope="row">{{ ++$index }}</th>
+                                            <td>{{ $item->code }}</td>
                                             <td>{{ $item->class->class->name }}</td>
                                             <td>{{ $item->week }}</td>
                                             <td>{{ $item->estimate_time }}</td>
