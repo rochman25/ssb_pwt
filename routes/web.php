@@ -55,7 +55,8 @@ Route::middleware(['auth','verified'])->group(function(){
     })->name('/');
     Route::get('roles',[RoleController::class,'index'])->name('roles.index');
     Route::resource('users', UserController::class);
-    Route::put('students\{id}\biodata',[StudentController::class,'updateStudent'])->name('students.update.biodata');
+    Route::put('students/{id}/biodata',[StudentController::class,'updateStudent'])->name('students.update.biodata');
+    Route::get('students/print/all',[StudentController::class,'printStudents'])->name('students.print');
     Route::resource('students', StudentController::class);
     Route::resource('classes', ClassController::class);
     Route::get('instructors/print/all',[InstructorController::class,'printInstructor'])->name('instructors.print');
