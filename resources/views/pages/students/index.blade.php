@@ -53,7 +53,7 @@
                                             <td>{{ $item->fullname }}</td>
                                             <td>{{ $item->gender }}</td>
                                             <td>{{ $item->address }}</td>
-                                            <td>{{ $item->class->class->name }}</td>
+                                            <td>{{ $item->class->class->name ?? "-" }}</td>
                                             <td>
                                                 <a href="{{ route('students.edit', $item->id) }}"
                                                     class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit</a>
