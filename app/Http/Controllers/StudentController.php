@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
+use PDF;
 
 class StudentController extends Controller
 {
@@ -206,12 +207,31 @@ class StudentController extends Controller
             DB::beginTransaction();
             $student = Student::find($id);
             $requestData = $request->only(['fullname', 'gender', 'email', 'phone_number', 'gender', 'dob', 'pob', 'address', 'parent_name', 'parent_address', 'parent_phone_number']);
+            if($request->hasfile('photo_profil')){
+                $file = explode("/", $student->photo_profil);
+                Storage::delete('public/students/' . $file[array_key_last($file)]);
+
+                $filename = uniqid() . "." . $request->file("photo_profil")->extension();
+                $path = $request->file("photo_profil")->storeAs('public/students', $filename);
+                $url = Storage::url($path);
+                $requestData['photo_profil'] = $url;
+            }
             $student->update($requestData);
             DB::commit();
             return redirect()->back()->with('success', 'Biodata berhasil diperbarui');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function printStudents(Request $request){
+        try {
+            $students = Student::all();
+            $pdf = PDF::loadView('pages.students.print_out',compact('students'));
+            return $pdf->stream();
+        } catch (\Throwable $th) {
+            dd($th);
         }
     }
 

@@ -28,6 +28,8 @@
                         <span>berikut list data siswa.</span>
                         <a href="{{ route('students.create') }}" class="btn btn-primary mt-3"><i class="fa fa-plus"></i>
                             Tambah</a>
+                        <a href="{{ route('students.print') }}" class="btn btn-md btn-info mt-3"
+                            style="float: right"><i class="fa fa-print"></i> Cetak</a>
                     </div>
                     <div class="card-body">
                         @component('components.alert-success')
@@ -40,7 +42,7 @@
                                         <th scope="col">Nama Lengkap</th>
                                         <th scope="col">Jenis Kelamin</th>
                                         <th scope="col">Alamat</th>
-                                        <th scope="col">Terakhir diupdate</th>
+                                        <th scope="col">Kode Kelas</th>
                                         <th scope="col">Aksi</th>
                                     </tr>
                                 </thead>
@@ -51,7 +53,7 @@
                                             <td>{{ $item->fullname }}</td>
                                             <td>{{ $item->gender }}</td>
                                             <td>{{ $item->address }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y H:i:s') }}</td>
+                                            <td>{{ $item->class->class->name }}</td>
                                             <td>
                                                 <a href="{{ route('students.edit', $item->id) }}"
                                                     class="btn btn-sm btn-success"><i class="fa fa-edit"></i> Edit</a>
