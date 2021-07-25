@@ -29,7 +29,7 @@
                     <div class="card-body">
                         @component('components.alert-danger')
                         @endcomponent
-                        <form action="{{ route('instructors.update',$instructor->id) }}" method="POST">
+                        <form action="{{ route('instructors.update',$instructor->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method("PUT")
                             <div class="row">
@@ -105,6 +105,15 @@
                                         id="validationServer03" name="address"
                                         required="">{{ old('address',$instructor->address) }}</textarea>
                                     @error('address')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="validationServer03">Photo Profil</label>
+                                    <input type="file" class="form-control" name="photo_profil">
+                                    @error('photo_profil')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>

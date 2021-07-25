@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Cetak Kartu SPP</title>
+    <title>Cetak Data Pelatih</title>
     <style>
         .clearfix:after {
             content: "";
@@ -183,20 +183,11 @@
         <hr style="margin-right:50px;margin-left:50px;" />
         <div class="row">
             <div class="column">
-                <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">KARTU IURAN SPP</h4>
+                <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">DATA PELATIH</h4>
                 <h4 style="text-align: center;margin-top:0px;margin-bottom:0px;">SEKOLAH SEPAK BOLA (SSB) INDONESIA MUDA
                     PURWOKERTO</h4>
-                <h4 style="text-align: center;margin-top:0px;margin-bottom:10px;">TAHUN
-                    {{ date('Y') - 1 . '/' . date('Y') }}</h4>
-            </div>
-        </div>
-        <div class="row" style="margin-top: 30px">
-            <div id="project">
-                <div style="margin-left: 50px">NAMA <b style="margin-left: 103px">: {{ $student->fullname }}</b></div>
-                <div style="margin-left: 50px">TEMPAT / TGL LAHIR <b style="margin-left: 20px">:
-                        {{ $student->pob . '/' . \Carbon\Carbon::parse($student->dob)->format('d-M-Y') }}</b> </div>
-                <div style="margin-left: 50px">KELAS <b style="margin-left: 102px">:
-                        {{ $student->class->class->name }}</b> </div>
+                {{-- <h4 style="text-align: center;margin-top:0px;margin-bottom:10px;">TAHUN
+                    {{ date('Y') - 1 . '/' . date('Y') }}</h4> --}}
             </div>
         </div>
     </header>
@@ -204,53 +195,27 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="service" style="text-align: center">BULAN</th>
-                    <th class="desc" style="text-align: center">TANGGAL BAYAR</th>
-                    <th style="text-align: center">STATUS</th>
-                    <th style="text-align: center">NOMINAL</th>
+                    <th class="service" style="text-align: center">NAMA LENGKAP</th>
+                    <th class="desc" style="text-align: center">JENIS KELAMIN</th>
+                    <th style="text-align: center">ALAMAT</th>
+                    <th style="text-align: center">KODE KELAS</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($student->payments as $item)
+                @foreach ($instructors as $item)
                     <tr>
                         <td class="service" style="text-align: center">
-                            {{ \Carbon\Carbon::parse($item->month)->format('M-Y') }}</td>
+                            {{ $item->name }}</td>
                         <td class="desc" style="text-align: center">
-                            {{ \Carbon\Carbon::parse($item->date)->format('d-M-Y') }}</td>
-                        <td class="unit" style="text-align: center">{{ $item->status }}</td>
+                            {{ $item->gender }}</td>
+                        <td class="unit" style="text-align: center">{{ $item->address }}</td>
                         <td class="total" style="text-align: center">
-                            {{ 'Rp ' . number_format($item->amount, 0, '.', '.') }}</td>
+                            {{ $item->class->class->name }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </main>
-    <table style="width: 100%; margin-left: 50px;margin-right: 50px">
-        <tr>
-            <td style="width: 10%;">
-                <p style="margin-left:50px">Ketua</p>
-            </td>
-            <td style="width: 20%;">
-                <p style="text-align: center">Purwokerto, {{ date('d-M-Y') }}
-                    <br />Bendahara
-                </p>
-            </td>
-        </tr>
-        @for ($i = 1; $i <= 10; $i++)
-            <tr>
-                <td></td>
-            </tr>
-        @endfor
-        <tr>
-            <td style="width: 80%;">
-                <p>KUAT SANTOSA, S.Pd.</p>
-            </td>
-            <td style="width: 20%;">
-                <p style="text-align: center"> TUGIYONO, S.H.
-                </p>
-            </td>
-        </tr>
-    </table>
 </body>
 
 </html>

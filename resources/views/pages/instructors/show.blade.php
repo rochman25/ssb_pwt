@@ -37,7 +37,7 @@
                                 <input type="hidden" name="name" value="{{ $instructor->name }}">
                                 <div class="row mb-2">
                                     <div class="col-auto"><img class="img-70 rounded-circle" alt=""
-                                            src="{{ asset('assets/images/user/2.jpg') }}"></div>
+                                            src="{{ asset($instructor->photo_profil) }}"></div>
                                     <div class="col">
                                         <h3 class="mb-1">{{ $instructor->name }}</h3>
                                         <p class="mb-4">{{ $instructor->class->class->name ?? '-' }}</p>
@@ -45,16 +45,16 @@
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Username</label>
-                                    <input class="form-control @error('username') is-invalid @enderror" type="text" name="username"
-                                        value="{{ $instructor->user->username }}" placeholder="">
+                                    <input class="form-control @error('username') is-invalid @enderror" type="text"
+                                        name="username" value="{{ $instructor->user->username }}" placeholder="">
                                     @error('username')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="form-group mb-3">
                                     <label class="form-label">Email-Address</label>
-                                    <input class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $instructor->user->email }}"
-                                        placeholder="your-email@domain.com">
+                                    <input class="form-control @error('email') is-invalid @enderror" name="email"
+                                        value="{{ $instructor->user->email }}" placeholder="your-email@domain.com">
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -83,11 +83,13 @@
                                     @endcomponent
                                     @csrf
                                     @method("PUT")
+                                    <input type="hidden" name="email" value="{{ $instructor->user->email }}">
+                                    <input type="hidden" name="username" value="{{ $instructor->user->username }}">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="validationServer01">Nama Lengkap</label>
-                                            <input class="form-control @error('name') is-invalid @enderror"
-                                                name="name" id="validationServer01" type="text"
+                                            <input class="form-control @error('name') is-invalid @enderror" name="name"
+                                                id="validationServer01" type="text"
                                                 value="{{ old('name', $instructor->name) }}" required="">
                                             @error('name')
                                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -143,6 +145,13 @@
                                                 id="validationServer04" name="phone_number"
                                                 value="{{ old('phone_number', $instructor->phone_number) }}" required="">
                                             @error('phone_number')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="validationServer03">Photo Profil</label>
+                                            <input type="file" class="form-control" name="photo_profil">
+                                            @error('photo_profil')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
