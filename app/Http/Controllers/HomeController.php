@@ -23,9 +23,12 @@ class HomeController extends Controller
             }
             $student = Student::find(Auth::user()->student->id);
             // dd($student->class);
-            $jadwal = Schedule::with(['details','class' => function($query)use($student){
-                $query->where('class_id',$student->class->class_id);
-            }])->orderBy('created_at','ASC')->get();
+            $jadwal = [];
+            if($student->class){
+                $jadwal = Schedule::with(['details','class' => function($query)use($student){
+                    $query->where('class_id',$student->class->class_id);
+                }])->orderBy('created_at','ASC')->get();
+            }
             // dd($jadwal->toArray());
             return view('pages.dashboard.siswa',compact('jadwal'));
         }else if($user->hasrole('instructor')){
