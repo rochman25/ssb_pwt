@@ -30,7 +30,19 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+        $user = User::find(Auth::user()->id);
         $schedules = Schedule::paginate(10);
+        if($user->hasrole('instructor')){
+            $class = $user->instructor->class;
+            $idClass = [];
+            if($class){
+                $schedules = Schedule::where('class_instructor_id',$class->id)->paginate(10);
+            }
+
+        }else{
+            $schedules = Schedule::paginate(10);
+        }
+
         return view('pages.schedules.index', compact('schedules'));
     }
 

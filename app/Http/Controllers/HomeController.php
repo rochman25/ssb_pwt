@@ -25,17 +25,22 @@ class HomeController extends Controller
             // dd($student->class);
             $jadwal = [];
             if($student->class){
-                $jadwal = Schedule::with(['details','class' => function($query)use($student){
+                $jadwal = Schedule::with(['details','class'])->whereHas('class',function($query)use($student){
                     $query->where('class_id',$student->class->class_id);
-                }])->orderBy('created_at','ASC')->get();
+                })->orderBy('created_at','ASC')->get();
             }
             // dd($jadwal->toArray());
             return view('pages.dashboard.siswa',compact('jadwal'));
         }else if($user->hasrole('instructor')){
             $instructor = Instructor::find(Auth::user()->instructor->id);
-            $jadwal = Schedule::with(['details','class' => function($query)use($instructor){
-                $query->where('class_id',$instructor->class->class_id);
-            }])->orderBy('created_at','ASC')->get();
+            $jadwal = [];
+            if($instructor->class){
+                $jadwal = Schedule::with(['details','class'])->whereHas('class',function($query)use($instructor){
+                    $query->where('class_id',$instructor->class->class_id);
+                })
+                // ->where('class_instructor_id',$instructor->class->id)
+                ->orderBy('created_at','ASC')->get();
+            }
             // dd($jadwal->toArray());
             return view('pages.dashboard.instructor',compact('jadwal'));
         }
