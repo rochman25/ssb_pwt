@@ -69,7 +69,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = User::find($id);
+        return view('pages.users.show',compact('user'));
     }
 
     /**
@@ -107,12 +108,19 @@ class UserController extends Controller
             if(!empty($request->input('password'))){
                 $userData['password'] = Hash::make($request->input('password'));   
             }
-            $user->assignRole([$request->input('role')]);
+            if($request->input('role')){
+                $user->assignRole([$request->input('role')]);
+            }
             $user->update($userData);
             DB::commit();
             if($user->hasRole('siswa')){
                 return redirect()->back()->with('success','Akun berhasil diperbarui');
             }
+
+            if($request->input('type') == "account"){
+                return redirect()->back()->with('success','Akun berhasil diperbarui');
+            }
+
             return redirect()->route('users.index')->with('success',$this->context.' berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();

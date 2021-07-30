@@ -47,6 +47,12 @@
               </li>
               @endhasrole
 
+              @hasrole('Admin')
+              <li>
+                <a href="{{ route('users.show',Auth::user()->id) }}"><i data-feather="user"></i><span>Account </span></a>
+              </li>
+              @endhasrole
+
               <li>
                 <a href="{{ route('logout') }}"><i data-feather="log-in"> </i><span>Log Out</span></a>
               </li>
