@@ -47,6 +47,7 @@ class AuthController extends Controller
             return back()->withInput()->withError('Mohon maaf username atau password tidak sesuai.');
         } catch (\Throwable $th) {
             //throw $th;
+            dd($th);
             return redirect()->back()->withInput()->withError('Mohon maaf terjadi kesalahan pada request anda. Harap mencoba lagi dalam beberapa saat.');
         }
     }

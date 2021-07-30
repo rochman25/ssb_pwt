@@ -30,14 +30,23 @@
             <div class="media profile-media">
               <img class="b-r-10" src="{{asset('assets/images/dashboard/profile.jpg')}}" alt="" />
               <div class="media-body">
-                <span>Emay Walter</span>
-                <p class="mb-0 font-roboto">Admin <i class="middle fa fa-angle-down"></i></p>
+                <span>{{ Auth::user()->name }}</span>
+                <p class="mb-0 font-roboto">{{ Auth::user()->roles->pluck('name') }} <i class="middle fa fa-angle-down"></i></p>
               </div>
             </div>
             <ul class="profile-dropdown onhover-show-div">
+              @hasrole('siswa')
               <li>
-                <a href="#"><i data-feather="user"></i><span>Account </span></a>
+                <a href="{{ route('students.show',Auth::user()->student->id) }}"><i data-feather="user"></i><span>Account </span></a>
               </li>
+              @endhasrole
+
+              @hasrole('instructor')
+              <li>
+                <a href="{{ route('instructors.show',Auth::user()->instructor->id) }}"><i data-feather="user"></i><span>Account </span></a>
+              </li>
+              @endhasrole
+
               <li>
                 <a href="{{ route('logout') }}"><i data-feather="log-in"> </i><span>Log Out</span></a>
               </li>
